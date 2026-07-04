@@ -32,7 +32,7 @@ I'm **Mithilesh Adhinarayanan**, a B.Tech student in **Computer Science Engineer
 
 ---
 
-## 🚀 Live Portfolio
+##  Live Portfolio
 
 <div align="center">
 
