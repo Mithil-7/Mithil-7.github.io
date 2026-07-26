@@ -1855,21 +1855,7 @@ const revealObs = new IntersectionObserver((entries) => {
 }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 reveals.forEach(el => revealObs.observe(el));
 
-// -----------------------------------------------------------------------
-// CONTACT FORM — real delivery via Formspree
-//
-// This form now actually SENDS an email to you (mithilcuber@gmail.com)
-// whenever someone submits it — no mailto popup, fully in-page.
-//
-// SETUP (one-time, ~2 minutes):
-//   1. Go to https://formspree.io and sign up free with mithilcuber@gmail.com
-//   2. Create a new form → it gives you an endpoint like:
-//        https://formspree.io/f/abcdEFGH
-//   3. Replace YOUR_FORM_ID below with that ID.
-//   4. Formspree will send a confirmation email the first time — click
-//      "Confirm" once, and every future submission lands in your inbox.
-// -----------------------------------------------------------------------
-const FORMSPREE_ENDPOINT = "https://formspree.io/f/YOUR_FORM_ID";
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/maqraqoo";
 
 const contactForm = document.getElementById('contact-form');
 const submitBtn = document.getElementById('f-submit-btn');
