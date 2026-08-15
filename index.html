@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%2300c896'/><text x='50%25' y='54%25' font-size='18' text-anchor='middle' dominant-baseline='middle' font-family='monospace' fill='%23081a0f'>M</text></svg>">
+<title>Mithilesh Adhinarayanan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --bg:     #0c0a04;
+  --bg2:    #110e05;
+  --panel:  #191408;
+  --border: rgba(255,200,40,0.13);
+  --accent: #f5b800;
+  --accent2:#ffd740;
+  --accent3:#fff5b2;
+  --warm:   #fff5b2;
+  --text:   #f5eecc;
+  --muted:  #8a7840;
+  --glow:   rgba(255,200,40,0.22);
+  --glow2:  rgba(255,215,64,0.18);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;overflow-x:hidden;cursor:none;}
+
+.cursor-dot{position:fixed;top:0;left:0;z-index:9999;width:8px;height:8px;border-radius:50%;background:var(--accent);pointer-events:none;transform:translate(-50%,-50%);box-shadow:0 0 10px var(--accent),0 0 20px rgba(255,200,40,0.4);}
+.cursor-ring{position:fixed;top:0;left:0;z-index:9998;width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(255,200,40,0.45);pointer-events:none;transform:translate(-50%,-50%);transition:width 0.18s,height 0.18s,border-color 0.18s;}
+body:has(a:hover) .cursor-ring,body:has(button:hover) .cursor-ring{width:46px;height:46px;border-color:var(--accent2);}
+
+#neural-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.35;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1rem 3.5rem;background:rgba(6,14,9,0.82);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Space Mono',monospace;font-size:0.88rem;color:var(--accent);letter-spacing:0.18em;text-decoration:none;display:flex;align-items:center;gap:0.6rem;}
+.nav-logo-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:logoPulse 2.5s ease-in-out infinite;}
+@keyframes logoPulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(0.7);}}
+.nav-links{display:flex;gap:2.2rem;list-style:none;}
+.nav-links a{font-size:0.73rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color 0.2s;font-family:'JetBrains Mono',monospace;}
+.nav-links a:hover{color:var(--accent);}
+
+section{position:relative;z-index:1;}
+
+/* HERO */
+#hero{min-height:100vh;display:grid;grid-template-columns:1fr auto;align-items:center;padding:7rem 4rem 4rem;gap:4rem;position:relative;}
+.hero-left{max-width:640px;}
+.hero-tag{font-family:'JetBrains Mono',monospace;font-size:0.72rem;letter-spacing:0.22em;color:var(--accent);text-transform:uppercase;margin-bottom:1.4rem;display:flex;align-items:center;gap:0.8rem;opacity:0;animation:fadeUp 0.8s 0.2s forwards;}
+.hero-tag::before{content:'';width:2rem;height:1px;background:var(--accent);display:block;}
+.hero-name{font-size:clamp(3rem,7vw,6.2rem);font-weight:800;line-height:0.95;letter-spacing:-0.02em;margin-bottom:0.6rem;opacity:0;animation:fadeUp 0.8s 0.4s forwards;}
+.hero-name .line1{display:block;color:var(--text);}
+.hero-name .line2{display:block;background:linear-gradient(130deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-size:clamp(2rem,4vw,5rem);}
+.hero-role{font-family:'JetBrains Mono',monospace;font-size:0.82rem;color:var(--accent);letter-spacing:0.12em;margin-bottom:1.4rem;opacity:0;animation:fadeUp 0.8s 0.55s forwards;}
+.hero-subtitle{font-size:1rem;color:var(--muted);line-height:1.75;max-width:500px;margin-bottom:2.5rem;opacity:0;animation:fadeUp 0.8s 0.65s forwards;}
+.hero-subtitle strong{color:var(--text);}
+.hero-btns{display:flex;gap:0.8rem;flex-wrap:wrap;opacity:0;animation:fadeUp 0.8s 0.8s forwards;}
+
+/* PHOTO FRAME */
+.hero-photo-wrap{opacity:0;animation:fadeLeft 0.9s 0.9s forwards;position:relative;flex-shrink:0;}
+.hero-photo-ring{width:290px;height:350px;border-radius:24px 24px 80px 24px;background:linear-gradient(145deg,var(--accent),var(--accent2),rgba(255,200,40,0.1));padding:3px;position:relative;}
+.hero-photo-ring::before{content:'';position:absolute;inset:-8px;border-radius:28px 28px 84px 28px;border:1px solid rgba(255,200,40,0.2);animation:ringRotate 8s linear infinite;}
+@keyframes ringRotate{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+.hero-photo-inner{width:100%;height:100%;border-radius:22px 22px 78px 22px;background:var(--panel);overflow:hidden;display:flex;align-items:center;justify-content:center;position:relative;}
+.hero-photo-inner img{width:100%;height:100%;object-fit:cover;object-position:top center;filter:contrast(1.05) saturate(0.9);}
+.hero-photo-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.8rem;color:var(--muted);}
+.hero-photo-placeholder svg{width:64px;height:64px;opacity:0.4;}
+.hero-photo-placeholder span{font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;color:var(--muted);text-align:center;line-height:1.5;}
+.hero-photo-badge{position:absolute;bottom:-12px;right:-12px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:12px;padding:0.6rem 1rem;font-family:'Space Mono',monospace;font-size:0.7rem;font-weight:700;color:#081a0f;letter-spacing:0.05em;box-shadow:0 4px 20px var(--glow);}
+.hero-corner-tag{position:absolute;top:-10px;left:-10px;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:0.4rem 0.7rem;font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--accent);letter-spacing:0.08em;}
+
+.hero-stats-row{display:flex;gap:1.5rem;margin-top:2rem;opacity:0;animation:fadeUp 0.8s 1.1s forwards;}
+.mini-stat{text-align:center;padding:0.8rem 1.2rem;background:var(--panel);border:1px solid var(--border);border-radius:10px;border-bottom:2px solid var(--accent);}
+.mini-stat-num{font-family:'Space Mono',monospace;font-size:1.4rem;font-weight:700;color:var(--accent);line-height:1;}
+.mini-stat-lbl{font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-top:0.2rem;font-family:'JetBrains Mono',monospace;}
+
+.scroll-indicator{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:0.4rem;opacity:0;animation:fadeUp 1s 1.5s forwards;}
+.scroll-indicator span{font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;}
+.scroll-line{width:1px;height:36px;background:linear-gradient(to bottom,var(--accent),transparent);animation:sp 2s infinite;}
+
+/* BUTTONS */
+.btn-primary{display:inline-flex;align-items:center;gap:0.5rem;padding:0.8rem 1.8rem;background:linear-gradient(130deg,var(--accent),var(--accent2));color:#060e09;font-family:'Space Mono',monospace;font-size:0.78rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;border-radius:6px;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 0 20px var(--glow);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 36px var(--glow);}
+.btn-ghost{display:inline-flex;align-items:center;gap:0.5rem;padding:0.8rem 1.8rem;border:1px solid var(--border);color:var(--muted);font-family:'Space Mono',monospace;font-size:0.78rem;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;border-radius:6px;transition:border-color 0.2s,color 0.2s,background 0.2s;background:transparent;cursor:pointer;}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent);background:rgba(0,200,120,0.05);}
+
+/* SECTIONS */
+.section-wrap{padding:6rem 4rem;max-width:1160px;margin:0 auto;}
+.section-tag{font-family:'JetBrains Mono',monospace;font-size:0.7rem;letter-spacing:0.25em;color:var(--accent);text-transform:uppercase;margin-bottom:0.7rem;display:flex;align-items:center;gap:0.7rem;}
+.section-tag::before{content:'';width:1.8rem;height:1px;background:var(--accent);}
+.section-title{font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:800;letter-spacing:-0.02em;line-height:1.1;margin-bottom:3rem;color:var(--text);}
+.section-title .accent{color:var(--accent);}
+.section-divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);position:relative;z-index:1;}
+
+/* ABOUT */
+#about .inner{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;}
+.about-text p{color:var(--muted);line-height:1.8;margin-bottom:1.1rem;font-size:0.97rem;}
+.about-text p strong{color:var(--text);}
+.about-links{display:flex;flex-wrap:wrap;gap:0.6rem;margin-top:1.8rem;}
+.link-chip{display:inline-flex;align-items:center;gap:0.4rem;padding:0.45rem 0.9rem;background:var(--panel);border:1px solid var(--border);border-radius:100px;font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted);text-decoration:none;transition:border-color 0.2s,color 0.2s;}
+.link-chip:hover{border-color:var(--accent);color:var(--accent);}
+.link-chip svg{width:12px;height:12px;flex-shrink:0;}
+.about-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:1.8rem;position:relative;overflow:hidden;}
+.about-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2),rgba(255,200,40,0.2));}
+.about-card-header{font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--muted);letter-spacing:0.1em;margin-bottom:1.4rem;text-transform:uppercase;}
+.edu-item{padding:0.9rem 0;border-bottom:1px solid var(--border);}
+.edu-item:last-child{border-bottom:none;padding-bottom:0;}
+.edu-school{font-size:0.92rem;font-weight:700;color:var(--text);margin-bottom:0.25rem;}
+.edu-degree{font-size:0.79rem;color:var(--muted);margin-bottom:0.2rem;font-family:'JetBrains Mono',monospace;}
+.edu-year{font-size:0.7rem;color:var(--accent3);font-family:'JetBrains Mono',monospace;}
+
+/* SKILLS */
+#skills{background:var(--bg2);}
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:1.2rem;}
+.skill-category{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:1.6rem;transition:border-color 0.2s,transform 0.2s;position:relative;overflow:hidden;}
+.skill-category::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,var(--accent),transparent);transform:scaleX(0);transform-origin:left;transition:transform 0.3s;}
+.skill-category:hover{border-color:rgba(255,200,40,0.3);transform:translateY(-3px);}
+.skill-category:hover::after{transform:scaleX(1);}
+.skill-cat-title{font-size:0.72rem;font-family:'JetBrains Mono',monospace;letter-spacing:0.18em;color:var(--accent);text-transform:uppercase;margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;}
+.skill-tags{display:flex;flex-wrap:wrap;gap:0.45rem;}
+.skill-tag{padding:0.3rem 0.75rem;background:rgba(255,200,40,0.06);border:1px solid rgba(255,200,40,0.14);border-radius:4px;font-size:0.76rem;color:var(--text);font-family:'JetBrains Mono',monospace;transition:background 0.2s,border-color 0.2s,color 0.2s;}
+.skill-tag:hover{background:rgba(255,200,40,0.12);border-color:var(--accent);color:var(--accent);}
+.skill-tag.highlight{background:rgba(255,215,64,0.1);border-color:rgba(255,215,64,0.3);color:var(--accent2);}
+
+/* RESEARCH */
+.research-grid{display:flex;flex-direction:column;gap:1.3rem;}
+.research-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:1.8rem;display:grid;grid-template-columns:auto 1fr;gap:0 1.8rem;align-items:start;transition:border-color 0.2s,transform 0.2s;position:relative;overflow:hidden;}
+.research-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,var(--accent),var(--accent2));border-radius:3px 0 0 3px;}
+.research-card:hover{border-color:rgba(255,200,40,0.3);transform:translateX(4px);}
+.research-icon{width:46px;height:46px;border-radius:10px;background:rgba(255,200,40,0.1);border:1px solid rgba(255,200,40,0.2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+.research-title{font-size:1.05rem;font-weight:700;margin-bottom:0.5rem;}
+.research-tags{display:flex;flex-wrap:wrap;gap:0.45rem;}
+.r-tag{padding:0.22rem 0.6rem;background:rgba(255,200,40,0.1);border:1px solid rgba(255,200,40,0.25);border-radius:3px;font-size:0.7rem;color:var(--accent2);font-family:'JetBrains Mono',monospace;}
+.status-badge{display:inline-flex;align-items:center;gap:0.35rem;padding:0.22rem 0.65rem;background:rgba(255,200,40,0.08);border:1px solid rgba(255,200,40,0.2);border-radius:100px;font-size:0.65rem;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:0.5rem;}
+.status-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.4;transform:scale(0.7);}}
+
+/* EXPERIENCE */
+.experience-timeline{display:flex;flex-direction:column;gap:0;position:relative;}
+.experience-timeline::before{content:'';position:absolute;left:23px;top:12px;bottom:12px;width:1px;background:linear-gradient(to bottom,var(--accent),var(--accent2),transparent);}
+.exp-card{display:grid;grid-template-columns:48px 1fr;gap:0 1.4rem;padding-bottom:2.2rem;position:relative;}
+.exp-card:last-child{padding-bottom:0;}
+.exp-dot-wrap{display:flex;flex-direction:column;align-items:center;padding-top:4px;position:relative;z-index:1;}
+.exp-dot{width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid var(--bg2);box-shadow:0 0 8px var(--accent);flex-shrink:0;}
+.exp-body{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:1.4rem 1.7rem;transition:border-color 0.2s,transform 0.2s;}
+.exp-body:hover{border-color:rgba(255,200,40,0.3);transform:translateX(4px);}
+.exp-role{font-size:0.97rem;font-weight:700;color:var(--text);margin-bottom:0.18rem;}
+.exp-company{font-family:'JetBrains Mono',monospace;font-size:0.76rem;color:var(--accent);letter-spacing:0.07em;margin-bottom:0.18rem;}
+.exp-period{font-family:'JetBrains Mono',monospace;font-size:0.66rem;color:var(--muted);letter-spacing:0.05em;margin-bottom:0.85rem;}
+.exp-bullets{list-style:none;display:flex;flex-direction:column;gap:0.4rem;}
+.exp-bullets li{font-size:0.84rem;color:var(--muted);line-height:1.6;display:flex;align-items:flex-start;gap:0.55rem;}
+.exp-bullets li::before{content:'▹';color:var(--accent);flex-shrink:0;margin-top:0.04rem;}
+.exp-tags{display:flex;flex-wrap:wrap;gap:0.38rem;margin-top:0.9rem;}
+.exp-tag{padding:0.18rem 0.55rem;background:rgba(255,200,40,0.06);border:1px solid rgba(255,200,40,0.13);border-radius:3px;font-size:0.66rem;color:var(--accent);font-family:'JetBrains Mono',monospace;}
+
+#projects{background:var(--bg2);}
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.3rem;}
+.project-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:1.8rem;transition:border-color 0.2s,transform 0.2s,box-shadow 0.2s;position:relative;overflow:hidden;}
+.project-card:hover{border-color:rgba(255,200,40,0.3);transform:translateY(-4px);box-shadow:0 20px 50px rgba(0,0,0,0.4),0 0 30px var(--glow);}
+.project-number{font-family:'Space Mono',monospace;font-size:2.5rem;font-weight:700;color:rgba(255,200,40,0.07);line-height:1;margin-bottom:0.4rem;}
+.project-title{font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:0.45rem;}
+.project-period{font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--muted);letter-spacing:0.07em;margin-bottom:0.9rem;}
+.project-desc{font-size:0.85rem;color:var(--muted);line-height:1.7;margin-bottom:1.1rem;}
+.project-stack{display:flex;flex-wrap:wrap;gap:0.38rem;}
+.stack-tag{padding:0.18rem 0.55rem;background:rgba(255,200,40,0.06);border:1px solid rgba(255,200,40,0.13);border-radius:3px;font-size:0.66rem;color:var(--accent);font-family:'JetBrains Mono',monospace;}
+/* GITHUB */
+#github{background:var(--bg);}
+.github-grid{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:2rem;overflow:hidden;}
+.github-contrib-count{margin-bottom:1.2rem;display:flex;align-items:baseline;gap:0.8rem;flex-wrap:wrap;}
+.count-num{font-family:'Space Mono',monospace;font-size:2rem;font-weight:700;color:var(--accent);}
+.count-label{font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--muted);letter-spacing:0.08em;}
+.github-contrib-wrap{overflow-x:auto;padding-bottom:0.5rem;}
+.gh-calendar{display:flex;gap:3px;min-width:max-content;}
+.gh-week{display:flex;flex-direction:column;gap:3px;}
+.gh-day{width:12px;height:12px;border-radius:2px;background:rgba(255,255,255,0.04);}
+
+/* ACHIEVEMENTS */
+.achievements-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;}
+.achievement-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:1.4rem;display:flex;align-items:flex-start;gap:0.9rem;transition:border-color 0.2s,transform 0.2s;}
+.achievement-card:hover{border-color:rgba(255,200,40,0.3);transform:translateY(-2px);}
+.achievement-icon{font-size:1.4rem;flex-shrink:0;width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:rgba(255,200,40,0.07);border-radius:8px;border:1px solid rgba(255,200,40,0.14);}
+.achievement-title{font-size:0.88rem;font-weight:600;color:var(--text);margin-bottom:0.25rem;line-height:1.4;}
+.achievement-desc{font-size:0.75rem;color:var(--muted);line-height:1.5;font-family:'JetBrains Mono',monospace;}
+
+/* CONTACT */
+#contact{background:var(--bg2);}
+.contact-inner{display:grid;grid-template-columns:1fr 1.2fr;gap:4rem;align-items:start;}
+.contact-left p{color:var(--muted);line-height:1.7;margin-bottom:2rem;font-size:0.93rem;}
+.contact-links{display:flex;flex-direction:column;gap:0.85rem;}
+.contact-link{display:flex;align-items:center;gap:0.9rem;padding:0.9rem 1.1rem;background:var(--panel);border:1px solid var(--border);border-radius:8px;text-decoration:none;transition:border-color 0.2s,transform 0.2s;color:var(--text);}
+.contact-link:hover{border-color:var(--accent);transform:translateX(4px);}
+.contact-link-icon{width:34px;height:34px;border-radius:7px;background:rgba(255,200,40,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--accent);}
+.contact-link-icon svg{width:15px;height:15px;}
+.contact-link-label{font-size:0.67rem;font-family:'JetBrains Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.12rem;}
+.contact-link-value{font-size:0.85rem;color:var(--text);font-weight:600;}
+.contact-right{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:2.2rem;position:relative;overflow:hidden;}
+.contact-right::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2),rgba(255,200,40,0.1));}
+.form-title{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:1.4rem;}
+.form-group{margin-bottom:1.1rem;}
+.form-group label{display:block;font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.35rem;}
+.form-group input,.form-group textarea{width:100%;background:rgba(255,255,255,0.25);border:1px solid var(--border);border-radius:6px;padding:0.7rem 0.95rem;color:var(--text);font-family:'Syne',sans-serif;font-size:0.88rem;transition:border-color 0.2s,box-shadow 0.2s;outline:none;resize:vertical;}
+.form-group input:focus,.form-group textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,200,40,0.08);}
+.form-group textarea{min-height:100px;}
+.form-submit{width:100%;padding:0.85rem;background:linear-gradient(130deg,var(--accent),var(--accent2));border:none;border-radius:6px;color:#060e09;font-family:'Space Mono',monospace;font-size:0.8rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:opacity 0.2s,transform 0.2s,box-shadow 0.2s;box-shadow:0 0 18px var(--glow);}
+.form-submit:hover:not(:disabled){opacity:0.9;transform:translateY(-1px);box-shadow:0 0 30px var(--glow);}
+.form-submit:disabled{opacity:0.6;cursor:not-allowed;}
+#form-msg{margin-top:0.8rem;font-family:'JetBrains Mono',monospace;font-size:0.73rem;min-height:1.2em;text-align:center;}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:1.8rem 4rem;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1;}
+.footer-left{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted);}
+.footer-left span{color:var(--accent);}
+.footer-right{font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--muted);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeLeft{from{opacity:0;transform:translateX(22px);}to{opacity:1;transform:translateX(0);}}
+@keyframes sp{0%{opacity:1;}50%{opacity:0.3;}100%{opacity:1;}}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity 0.7s ease,transform 0.7s ease;}
+.reveal.visible{opacity:1;transform:none;}
+
+@media(max-width:900px){
+  nav{padding:1rem 1.5rem;}
+  .nav-links{display:none;}
+  #hero{grid-template-columns:1fr;padding:6rem 1.5rem 3rem;}
+  .hero-photo-wrap{display:flex;justify-content:center;order:-1;}
+  .hero-photo-ring{width:200px;height:240px;}
+  .section-wrap{padding:4rem 1.5rem;}
+  #about .inner{grid-template-columns:1fr;}
+  .contact-inner{grid-template-columns:1fr;}
+  footer{flex-direction:column;gap:0.5rem;text-align:center;padding:1.5rem;}
+}
+</style>
+</head>
+<body>
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<canvas id="neural-canvas"></canvas>
+
+<nav>
+  <a class="nav-logo" href="#hero">
+    <span class="nav-logo-dot"></span>
+    MITHILESH · MA
+  </a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#research">Research</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#involvements">Involvements</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#github">GitHub</a></li>
+    <li><a href="#achievements">Awards</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<section id="hero">
+  <div class="hero-left">
+    <div class="hero-tag">Computer Science Engineering (AI&amp;DS) · SASTRA University</div>
+    <h1 class="hero-name">
+      <span class="line1">Mithilesh</span>
+      <span class="line2">Adhinarayanan</span>
+    </h1>
+    <div class="hero-role">// AI Researcher · Quant · Engineer</div>
+    <p class="hero-subtitle">
+      Building intelligent systems at the intersection of <strong>Deep Learning</strong>,
+      <strong>Reinforcement Learning</strong>, and <strong>Quantitative Finance</strong>.
+      WorldQuant BRAIN Consultant. IEEE researcher achieving <strong>95%+ forecast accuracy</strong>.
+    </p>
+    <div class="hero-btns">
+      <a href="#contact" class="btn-primary">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Get In Touch
+      </a>
+      <a href="https://github.com/Mithil-7" target="_blank" class="btn-ghost">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+        GitHub
+      </a>
+      <a href="https://www.linkedin.com/in/mithilesh-a-07486935b/" target="_blank" class="btn-ghost">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        LinkedIn
+      </a>
+    </div>
+    <div class="hero-stats-row">
+      <div class="mini-stat"><div class="mini-stat-num">95%+</div><div class="mini-stat-lbl">Forecast Accuracy</div></div>
+      <div class="mini-stat"><div class="mini-stat-num">Top 30</div><div class="mini-stat-lbl">CMI STEMS India</div></div>
+      <div class="mini-stat"><div class="mini-stat-num">IEEE</div><div class="mini-stat-lbl">Submitted</div></div>
+      <div class="mini-stat"><div class="mini-stat-num">WQ</div><div class="mini-stat-lbl">WorldQuant</div></div>
+    </div>
+  </div>
+
+  <div class="hero-photo-wrap">
+    <div class="hero-corner-tag">📍 Hosur, India</div>
+    <div class="hero-photo-ring">
+      <div class="hero-photo-inner">
+        <!-- PHOTO: Replace src with your actual image path e.g. Assets/photo.jpg -->
+        <img src="Assets/photo.jpg" alt="Mithilesh Adhinarayanan"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="hero-photo-placeholder" style="display:none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          <span>Add your photo as<br>Assets/photo.jpg</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-photo-badge">SASTRA '28 · AI&amp;DS</div>
+  </div>
+
+  <div class="scroll-indicator"><span>scroll</span><div class="scroll-line"></div></div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="about">
+  <div class="section-wrap">
+    <div class="inner">
+      <div class="about-text reveal">
+        <div class="section-tag">Who I am</div>
+        <h2 class="section-title">AI Researcher &amp;<br><span class="accent">Engineer</span></h2>
+        <p>I'm <strong>Mithilesh Adhinarayanan</strong>, a B.Tech student in Computer Science Engineering (AI &amp; DS) at <strong>SASTRA Deemed University</strong>, Thanjavur. I'm deeply passionate about the intersection of artificial intelligence, financial markets, and intelligent infrastructure.</p>
+        <p>My current research focuses on <strong>DNN-RL hybrid models</strong> for exchange rate prediction — incorporating macroeconomic signals like Crude Oil prices, Gold futures, and NIFTY 50 data. I'm also a <strong>Quantitative Researcher at WorldQuant</strong>, developing alpha strategies on their BRAIN platform.</p>
+        <p>Beyond research, I build full-stack AI applications and competed in the <strong>Smart India Hackathon 2025</strong> with an RL-based traffic management system. Top 30 India finalist in <strong>CMI STEMS 2025</strong> for research aptitude.</p>
+        <div class="about-links">
+          <a href="https://github.com/Mithil-7" target="_blank" class="link-chip"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>GitHub</a>
+          <a href="https://www.linkedin.com/in/mithilesh-a-07486935b/" target="_blank" class="link-chip"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>LinkedIn</a>
+          <a href="https://stackexchange.com/users/36784600/mithil-a" target="_blank" class="link-chip"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.986 21.865v-6.404h2.134V24H1.844v-8.539h2.134v6.404h15.008zM6.111 19.731H16.85v-2.134H6.111v2.134zm.259-4.852l10.48 2.189.451-2.07-10.478-2.187-.453 2.068zm1.359-5.056l9.705 4.53.903-1.95-9.706-4.53-.902 1.95zm2.715-4.785l8.217 6.855 1.359-1.62-8.216-6.853-1.36 1.618zM15.751 0l-1.746 1.294 6.405 8.604 1.746-1.294L15.751 0z"/></svg>Stack Exchange</a>
+          <a href="https://www.freelancer.in/u/Mithil7a" target="_blank" class="link-chip"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.585 0H24l-7.04 13.11H24v5.28H0l6.745-12.527v7.247h5.625L20.585 0zM12.37 5.86l-3.12 5.803h3.12V5.86z"/></svg>Freelancer</a>
+          <a href="mailto:mithilcuber@gmail.com" class="link-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Email</a>
+        </div>
+      </div>
+      <div class="about-visual reveal">
+        <div class="about-card">
+          <div class="about-card-header">🎓 Education</div>
+          <div class="edu-item"><div class="edu-school">SASTRA Deemed University</div><div class="edu-degree">B.Tech · Computer Science Engineering (AI &amp; DS)</div><div class="edu-year">Aug 2024 – June 2028 · Thanjavur, TN</div></div>
+          <div class="edu-item" style="margin-top:0.4rem;"><div class="edu-school">Harvard University (CS50)</div><div class="edu-degree">Web Programming with Python &amp; JavaScript · CS50W</div><div class="edu-year">In Progress · Remote</div></div>
+          <div class="edu-item" style="margin-top:0.4rem;"><div class="edu-school">Yale University (Coursera)</div><div class="edu-degree">Financial Markets Certification</div><div class="edu-year">Completed</div></div>
+        </div>
+        <div style="margin-top:1rem;padding:1.1rem 1.4rem;background:var(--panel);border:1px solid var(--border);border-radius:10px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.66rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.7rem;">📍 Location &amp; Contact</div>
+          <div style="font-size:0.88rem;color:var(--text);font-weight:600;">Hosur, India</div>
+          <div style="font-size:0.76rem;color:var(--muted);margin-top:0.2rem;font-family:'JetBrains Mono',monospace;">+91 9488694227 · mithilcuber@gmail.com</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="skills">
+  <div class="section-wrap">
+    <div class="reveal"><div class="section-tag">Expertise</div><h2 class="section-title">Technical <span class="accent">Skills</span></h2></div>
+    <div class="skills-grid">
+      <div class="skill-category reveal"><div class="skill-cat-title">🧠 AI / ML / Deep Learning</div><div class="skill-tags"><span class="skill-tag highlight">Reinforcement Learning</span><span class="skill-tag highlight">Deep Learning</span><span class="skill-tag">PPO</span><span class="skill-tag">DQN</span><span class="skill-tag">MARL</span><span class="skill-tag">Neural Networks</span><span class="skill-tag">Policy Gradient</span><span class="skill-tag">TensorFlow</span><span class="skill-tag">PyTorch</span><span class="skill-tag">Keras</span><span class="skill-tag">Scikit-Learn</span><span class="skill-tag">Backpropagation</span><span class="skill-tag">Time Series</span><span class="skill-tag">Transfer Learning</span><span class="skill-tag">Model Optimization</span></div></div>
+      <div class="skill-category reveal"><div class="skill-cat-title">💬 NLP / LLM</div><div class="skill-tags"><span class="skill-tag highlight">Natural Language Processing</span><span class="skill-tag highlight">Large Language Models</span><span class="skill-tag">Transformers</span><span class="skill-tag">BERT / GPT Architectures</span><span class="skill-tag">Hugging Face</span><span class="skill-tag">Text Classification</span><span class="skill-tag">Sentiment Analysis</span><span class="skill-tag">Tokenization</span><span class="skill-tag">Embeddings</span><span class="skill-tag">Prompt Engineering</span><span class="skill-tag">RAG</span><span class="skill-tag">LangChain</span></div></div>
+      <div class="skill-category reveal"><div class="skill-cat-title">👁️ Computer Vision (CV)</div><div class="skill-tags"><span class="skill-tag highlight">Computer Vision</span><span class="skill-tag highlight">OpenCV</span><span class="skill-tag">YOLO</span><span class="skill-tag">CNNs</span><span class="skill-tag">Object Detection</span><span class="skill-tag">Image Classification</span><span class="skill-tag">Image Segmentation</span><span class="skill-tag">Real-time Video Processing</span><span class="skill-tag">Feature Extraction</span><span class="skill-tag">Vehicle Detection</span></div></div>
+      <div class="skill-category reveal"><div class="skill-cat-title">💻 Programming Languages</div><div class="skill-tags"><span class="skill-tag highlight">Python (Advanced)</span><span class="skill-tag">Java (Swing/GUI)</span><span class="skill-tag">C++</span><span class="skill-tag">C</span><span class="skill-tag">SQL</span><span class="skill-tag">JavaScript</span></div></div>
+      <div class="skill-category reveal"><div class="skill-cat-title">🌐 Web &amp; Full Stack</div><div class="skill-tags"><span class="skill-tag highlight">Django</span><span class="skill-tag highlight">Streamlit</span><span class="skill-tag">Flask</span><span class="skill-tag">FastAPI</span><span class="skill-tag">React</span><span class="skill-tag">HTML / CSS</span><span class="skill-tag">MongoDB</span><span class="skill-tag">REST APIs</span></div></div>
+      <div class="skill-category reveal"><div class="skill-cat-title">📊 Data Science &amp; Analytics</div><div class="skill-tags"><span class="skill-tag highlight">NumPy</span><span class="skill-tag highlight">Pandas</span><span class="skill-tag">Matplotlib</span><span class="skill-tag">Seaborn</span><span class="skill-tag">Plotly</span><span class="skill-tag">Feature Engineering</span><span class="skill-tag">Data Cleaning</span><span class="skill-tag">Statistical Analysis</span><span class="skill-tag">EDA</span><span class="skill-tag">Data Visualization</span></div></div>
+      <div class="skill-category reveal"><div class="skill-cat-title">📈 Quantitative Finance</div><div class="skill-tags"><span class="skill-tag highlight">Quantitative Finance</span><span class="skill-tag">BRAIN Platform</span><span class="skill-tag">Custom Expression Languages</span><span class="skill-tag">Algorithmic Trading</span><span class="skill-tag">Alpha Research</span><span class="skill-tag">Financial Forecasting</span><span class="skill-tag">Exchange Rate Modeling</span><span class="skill-tag">Macroeconomic Analysis</span><span class="skill-tag">Risk Analysis</span><span class="skill-tag">Portfolio Optimization</span><span class="skill-tag">Backtesting</span><span class="skill-tag">Probability</span></div></div>
+      <div class="skill-category reveal"><div class="skill-cat-title">🔧 Tools &amp; Systems</div><div class="skill-tags"><span class="skill-tag highlight">High Performance Computing</span><span class="skill-tag">Git / GitHub</span><span class="skill-tag">Linux</span><span class="skill-tag">Jupyter Notebook</span><span class="skill-tag">Google Colab</span><span class="skill-tag">VS Code</span><span class="skill-tag">Docker</span><span class="skill-tag">Raspberry Pi</span><span class="skill-tag">DSA</span><span class="skill-tag highlight">APT Detection</span><span class="skill-tag highlight">Anomaly Detection</span><span class="skill-tag">Network Security</span></div></div>
+      <div class="skill-category reveal"><div class="skill-cat-title">🧮 Mathematics</div><div class="skill-tags"><span class="skill-tag highlight">Advanced Mathematics</span><span class="skill-tag">Probability Theory</span><span class="skill-tag">Linear Algebra</span><span class="skill-tag">Calculus</span><span class="skill-tag">Olympiad Mathematics</span><span class="skill-tag">Physics</span><span class="skill-tag">Statistical Modeling</span><span class="skill-tag">Problem Solving</span></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="research">
+  <div class="section-wrap">
+    <div class="reveal"><div class="section-tag">Academic Work</div><h2 class="section-title">Research <span class="accent">Experience</span></h2></div>
+    <div class="research-grid">
+      <div class="research-card reveal">
+        <div class="research-icon">📈</div>
+        <div>
+          <div class="status-badge"><div class="status-dot"></div>IEEE Submitted</div>
+          <div class="research-title">DNN-RL Based Solution for Predicting Exchange Rates</div>
+          <div class="research-sub">Financial Markets · SASTRA Deemed University · Mar 2026 – Present</div>
+          <div class="research-desc">Submitted to IEEE. Integrates Deep Neural Networks with policy-gradient RL (PPO) to augment time series models. Incorporates Crude Oil prices, Gold futures, and NIFTY 50 — achieving 95%+ predictive accuracy.</div>
+          <div class="research-tags"><span class="r-tag">PPO</span><span class="r-tag">Deep Learning</span><span class="r-tag">Time Series</span><span class="r-tag">Macroeconomics</span><span class="r-tag">NIFTY 50</span><span class="r-tag">IEEE</span></div>
+        </div>
+      </div>
+      <div class="research-card reveal">
+        <div class="research-icon">🔐</div>
+        <div>
+          <div class="status-badge"><div class="status-dot"></div>Active Research</div>
+          <div class="research-title">Advanced Persistent Threat (APT) Detection</div>
+          <div class="research-sub">Cybersecurity · SASTRA Deemed University · Feb 2026 – Present</div>
+          <div class="research-desc">Investigating APT detection using deep learning models to analyze network traffic and identify distinct stages of cyber vulnerabilities in enterprise environments.</div>
+          <div class="research-tags"><span class="r-tag">APT Detection</span><span class="r-tag">Anomaly Detection</span><span class="r-tag">Network Security</span><span class="r-tag">Deep Learning</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="experience">
+  <div class="section-wrap">
+    <div class="reveal"><div class="section-tag">Work &amp; Roles</div><h2 class="section-title">Professional <span class="accent">Experience</span></h2></div>
+    <div class="experience-timeline">
+      <div class="exp-card reveal">
+        <div class="exp-dot-wrap"><div class="exp-dot" style="background:var(--accent2);box-shadow:0 0 8px var(--accent2);"></div></div>
+        <div class="exp-body" style="border-color:rgba(221, 207, 9, 0.2);">
+          <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.5rem;"><div style="background:rgba(201, 120, 14, 0.1);border:1px solid rgba(177, 13, 13, 0.25);border-radius:5px;padding:0.25rem 0.65rem;font-family:'JetBrains Mono',monospace;font-size:0.66rem;color:var(--accent2);">Part-time · 5 mos</div></div>
+          <div class="exp-role" style="font-size:1.02rem;">WorldQuant</div>
+          <div class="exp-company" style="color:var(--accent2);margin-bottom:1.1rem;">Global Quantitative Investment Firm</div>
+          <div style="padding:0.9rem;background:rgba(209, 113, 23, 0.05);border:1px solid rgba(233, 103, 23, 0.12);border-radius:7px;margin-bottom:0.7rem;">
+            <div style="font-size:0.9rem;font-weight:700;color:var(--text);margin-bottom:0.12rem;">BRAIN Research Consultant</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:0.66rem;color:var(--muted);margin-bottom:0.65rem;">May 2026 – Present · 4 mos</div>
+            <ul class="exp-bullets"><li>Developing quantitative alphas using WorldQuant's BRAIN platform and Custom Expression Languages.</li><li>Applying probability theory and statistical modeling to construct and backtest financial signal strategies.</li><li>Leveraging data science skills to research and validate alpha ideas across global financial markets.</li></ul>
+          </div>
+          <div style="padding:0.9rem;background:rgba(229, 131, 34, 0.05);border:1px solid rgba(236, 132, 5, 0.12);border-radius:7px;margin-bottom:0.9rem;">
+            <div style="font-size:0.9rem;font-weight:700;color:var(--text);margin-bottom:0.12rem;">BRAIN Conditional Consultant</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:0.66rem;color:var(--muted);margin-bottom:0.65rem;">Apr 2026 – May 2026 · 2 mos</div>
+            <ul class="exp-bullets"><li>Researched conditional alpha strategies using BRAIN's expression language and logic-based signal construction.</li><li>Worked with probability-driven frameworks to evaluate signal quality and market applicability.</li></ul>
+          </div>
+          <div class="exp-tags"><span class="exp-tag" style="border-color:rgba(229, 190, 34, 0.25);color:var(--accent2);background:rgba(179, 145, 9, 0.07);">BRAIN Platform</span><span class="exp-tag" style="border-color:rgba(228, 186, 0, 0.25);color:var(--accent2);background:rgba(232, 169, 33, 0.07);">Custom Expression Languages</span><span class="exp-tag" style="border-color:rgba(229, 122, 34, 0.25);color:var(--accent2);background:rgba(240, 80, 6, 0.07);">Alpha Research</span><span class="exp-tag" style="border-color:rgba(233, 124, 35, 0.25);color:var(--accent2);background:rgba(234, 119, 19, 0.07);">Probability</span><span class="exp-tag" style="border-color:rgba(245, 123, 17, 0.25);color:var(--accent2);background:rgba(230, 135, 11, 0.07);">Quantitative Finance</span></div>
+        </div>
+      </div>
+      <div class="exp-card reveal">
+        <div class="exp-dot-wrap"><div class="exp-dot"></div></div>
+        <div class="exp-body"><div class="exp-role">Student Researcher — Financial Markets</div><div class="exp-company">SASTRA Deemed University</div><div class="exp-period">Mar 2026 – Present · Thanjavur, TN</div><ul class="exp-bullets"><li>Submitted DNN-RL exchange rate prediction paper to IEEE; awaiting peer review.</li><li>Integrating Deep Learning with PPO policy-gradient RL to augment time series forecasting models.</li><li>Incorporating macroeconomic variables (Crude Oil, Gold futures, NIFTY 50) — 95%+ accuracy.</li></ul><div class="exp-tags"><span class="exp-tag">PPO</span><span class="exp-tag">Deep Learning</span><span class="exp-tag">Time Series</span><span class="exp-tag">Quantitative Finance</span><span class="exp-tag">IEEE</span></div></div>
+      </div>
+      <div class="exp-card reveal">
+        <div class="exp-dot-wrap"><div class="exp-dot"></div></div>
+        <div class="exp-body"><div class="exp-role">Student Researcher — Cybersecurity</div><div class="exp-company">SASTRA Deemed University</div><div class="exp-period">Feb 2026 – Present · Thanjavur, TN</div><ul class="exp-bullets"><li>Investigating APT detection using deep learning models to analyze network traffic.</li><li>Developing anomaly identification systems to enhance enterprise network security frameworks.</li><li>Building robust ML models capable of detecting sophisticated, long-term threat actors.</li></ul><div class="exp-tags"><span class="exp-tag">APT Detection</span><span class="exp-tag">Anomaly Detection</span><span class="exp-tag">Network Security</span><span class="exp-tag">ML</span></div></div>
+      </div>
+      <div class="exp-card reveal">
+        <div class="exp-dot-wrap"><div class="exp-dot"></div></div>
+        <div class="exp-body"><div class="exp-role">Freelance AI/ML Developer</div><div class="exp-company">Freelancer.in · Self-Employed</div><div class="exp-period">2026 – Present · Remote</div><ul class="exp-bullets"><li>Delivering custom AI/ML solutions and full-stack web applications for clients across diverse domains.</li><li>Building end-to-end data pipelines, model training workflows, and deployment-ready backend APIs.</li><li>Integrating intelligent systems into client products using the Django and Python stack.</li></ul><div class="exp-tags"><span class="exp-tag">Python</span><span class="exp-tag">Django</span><span class="exp-tag">ML Models</span><span class="exp-tag">Full Stack</span><span class="exp-tag">API Development</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="involvements">
+  <div class="section-wrap">
+    <div class="reveal"><div class="section-tag">Community &amp; Events</div><h2 class="section-title">Involvements &amp; <span class="accent">Activities</span></h2></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.2rem;">
+      <div class="exp-body reveal" style="border-radius:10px;border:1px solid var(--border);padding:1.6rem;"><div style="font-size:1.7rem;margin-bottom:0.7rem;">🚦</div><div class="exp-role">Smart India Hackathon 2025</div><div class="exp-company">Government of India</div><div class="exp-period">Sep – Dec 2025 · Odisha</div><ul class="exp-bullets"><li>Developed an RL-based intelligent urban traffic signal control system to minimize clearance time.</li><li>Integrated OpenCV on Raspberry Pi for real-time vehicle detection and adaptive signal adjustments.</li><li>Applied MARL and DQN algorithms across multi-intersection environments.</li></ul><div class="exp-tags" style="margin-top:0.9rem;"><span class="exp-tag">DQN</span><span class="exp-tag">MARL</span><span class="exp-tag">OpenCV</span><span class="exp-tag">Raspberry Pi</span><span class="exp-tag">Computer Vision</span></div></div>
+      <div class="exp-body reveal" style="border-radius:10px;border:1px solid var(--border);padding:1.6rem;"><div style="font-size:1.7rem;margin-bottom:0.7rem;">💬</div><div class="exp-role">Stack Exchange Contributor</div><div class="exp-company">Stack Exchange Network</div><div class="exp-period">Ongoing · Remote</div><ul class="exp-bullets"><li>Active contributor across Mathematics, Computer Science, and Physics communities on Stack Exchange.</li><li>Engaging with the global researcher and developer community to solve technical and scientific challenges.</li></ul><div class="exp-tags" style="margin-top:0.9rem;"><span class="exp-tag">Mathematics</span><span class="exp-tag">Computer Science</span><span class="exp-tag">Physics</span><span class="exp-tag">Community</span></div></div>
+      <div class="exp-body reveal" style="border-radius:10px;border:1px solid var(--border);padding:1.6rem;"><div style="font-size:1.7rem;margin-bottom:0.7rem;">🧩</div><div class="exp-role">AOPS – Art Of Problem Solving</div><div class="exp-company">AoPS Community</div><div class="exp-period">2022 – Ongoing · Remote</div><ul class="exp-bullets"><li>Active contributor providing comprehensive solutions to difficult math and CS competition problems.</li><li>Answering student questions in forums and maintaining a collaborative educational environment.</li><li>Strong foundation in advanced mathematics and Olympiad-level problem solving.</li></ul><div class="exp-tags" style="margin-top:0.9rem;"><span class="exp-tag">Advanced Mathematics</span><span class="exp-tag">Olympiad</span><span class="exp-tag">Problem Solving</span><span class="exp-tag">Community</span></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="projects" style="background:var(--bg2);">
+  <div class="section-wrap">
+    <div class="reveal"><div class="section-tag">Built Things</div><h2 class="section-title">Technical <span class="accent">Projects</span></h2></div>
+    <div class="projects-grid">
+      <div class="project-card reveal"><div class="project-number">01</div><div class="project-title">RL-Based Traffic Management System</div><div class="project-period">Sep – Dec 2025 · Smart India Hackathon 2025</div><div class="project-desc">Intelligent urban signal control system minimizing traffic clearance time using Multi-Agent Reinforcement Learning. Real-time vehicle detection via OpenCV on Raspberry Pi with adaptive signal adjustment.</div><div class="project-stack"><span class="stack-tag">DQN</span><span class="stack-tag">MARL</span><span class="stack-tag">OpenCV</span><span class="stack-tag">Raspberry Pi</span><span class="stack-tag">Python</span><span class="stack-tag">Computer Vision</span></div></div>
+      <div class="project-card reveal"><div class="project-number">02</div><div class="project-title">Web-Based AI Applications</div><div class="project-period">Jan 2026 – Present · Web</div><div class="project-desc">Full-stack web platforms integrating custom AI/ML-backed solutions. End-to-end systems from data pipelines to interactive user interfaces using the Django Python stack.</div><div class="project-stack"><span class="stack-tag">Python</span><span class="stack-tag">Django</span><span class="stack-tag">MongoDB</span><span class="stack-tag">ML Models</span><span class="stack-tag">JavaScript</span><span class="stack-tag">REST APIs</span></div></div>
+      <div class="project-card reveal"><div class="project-number">03</div><div class="project-title">Exchange Rate Forecasting Engine</div><div class="project-period">Mar – Apr 2026 · Research Project · IEEE</div><div class="project-desc">End-to-end quantitative forecasting combining DNN architectures with PPO-based RL agents. Processes multivariate financial time series data achieving 95%+ accuracy. Submitted to IEEE.</div><div class="project-stack"><span class="stack-tag">TensorFlow</span><span class="stack-tag">PPO</span><span class="stack-tag">Time Series</span><span class="stack-tag">NumPy</span><span class="stack-tag">Pandas</span><span class="stack-tag">Feature Engineering</span></div></div>
+    </div>
+    <div style="margin-top:2rem;text-align:center;" class="reveal"><a href="https://github.com/Mithil-7" target="_blank" class="btn-ghost"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>View All Projects on GitHub</a></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="github">
+  <div class="section-wrap">
+    <div class="reveal"><div class="section-tag">Live from GitHub</div><h2 class="section-title">GitHub <span class="accent">Activity</span></h2></div>
+    <div class="github-grid reveal">
+      <div class="github-contrib-count" id="ghContribCount"><span class="count-num">—</span><span class="count-label">Loading contributions…</span></div>
+      <div class="github-contrib-wrap"><div class="gh-calendar" id="ghCalendar"></div></div>
+    </div>
+    <div style="margin-top:1.5rem;text-align:center;" class="reveal"><a href="https://github.com/Mithil-7" target="_blank" class="btn-ghost"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>Full Profile on GitHub</a></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="achievements">
+  <div class="section-wrap">
+    <div class="reveal"><div class="section-tag">Recognition</div><h2 class="section-title">Certifications &amp; <span class="accent">Achievements</span></h2></div>
+    <div class="achievements-grid">
+      <div class="achievement-card reveal"><div class="achievement-icon">🥇</div><div><div class="achievement-title">CMI STEMS Top 30 India</div><div class="achievement-desc">Chennai Mathematical Institute · Top 30 in India for research aptitude · 2025</div></div></div>
+      <div class="achievement-card reveal"><div class="achievement-icon">🏛️</div><div><div class="achievement-title">NPTEL SWAYAM Deep Learning</div><div class="achievement-desc">Neural network architectures, backpropagation &amp; optimization · 2026</div></div></div>
+      <div class="achievement-card reveal"><div class="achievement-icon">📊</div><div><div class="achievement-title">Yale — Financial Markets</div><div class="achievement-desc">Coursera · Market theory &amp; quantitative finance</div></div></div>
+      <div class="achievement-card reveal"><div class="achievement-icon">🌐</div><div><div class="achievement-title">Harvard CS50W</div><div class="achievement-desc">Web Programming with Python &amp; JavaScript · In Progress</div></div></div>
+      <div class="achievement-card reveal"><div class="achievement-icon">🔷</div><div><div class="achievement-title">Cisco Networking Academy</div><div class="achievement-desc">Data Science, Python &amp; Statistical Analysis</div></div></div>
+      <div class="achievement-card reveal"><div class="achievement-icon">➗</div><div><div class="achievement-title">Mathematics Olympiad</div><div class="achievement-desc">Merit certificate · Indian Olympiad Qualifier in Mathematics (IOQM)</div></div></div>
+      <div class="achievement-card reveal"><div class="achievement-icon">🚦</div><div><div class="achievement-title">Smart India Hackathon 2025</div><div class="achievement-desc">RL-based intelligent traffic management system · Odisha</div></div></div>
+      <div class="achievement-card reveal"><div class="achievement-icon">📝</div><div><div class="achievement-title">IEEE Research Paper — Submitted</div><div class="achievement-desc">DNN-RL Exchange Rate Prediction · Under peer review · 2026</div></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="contact" style="background:var(--bg2);">
+  <div class="section-wrap">
+    <div class="contact-inner">
+      <div class="contact-left reveal">
+        <div class="section-tag">Let's Connect</div>
+        <h2 class="section-title">Get In <span class="accent">Touch</span></h2>
+        <p>Open to research collaborations, internships, freelance projects, and conversations about AI, quantitative finance, or anything at the cutting edge.</p>
+        <div class="contact-links">
+          <a href="mailto:mithilcuber@gmail.com" class="contact-link"><div class="contact-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div><div class="contact-link-label">Email</div><div class="contact-link-value">mithilcuber@gmail.com</div></div></a>
+          <a href="https://www.linkedin.com/in/mithilesh-a-07486935b/" target="_blank" class="contact-link"><div class="contact-link-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></div><div><div class="contact-link-label">LinkedIn</div><div class="contact-link-value">mithilesh-a-07486935b</div></div></a>
+          <a href="https://github.com/Mithil-7" target="_blank" class="contact-link"><div class="contact-link-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></div><div><div class="contact-link-label">GitHub</div><div class="contact-link-value">github.com/Mithil-7</div></div></a>
+          <a href="https://www.freelancer.in/u/Mithil7a" target="_blank" class="contact-link"><div class="contact-link-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M20.585 0H24l-7.04 13.11H24v5.28H0l6.745-12.527v7.247h5.625L20.585 0zM12.37 5.86l-3.12 5.803h3.12V5.86z"/></svg></div><div><div class="contact-link-label">Freelancer</div><div class="contact-link-value">freelancer.in/u/Mithil7a</div></div></a>
+        </div>
+      </div>
+      <div class="contact-right reveal">
+        <div class="form-title">Send a Message</div>
+        <form id="contact-form">
+          <div class="form-group"><label>Your Name *</label><input type="text" id="f-name" name="name" placeholder="Your name" required></div>
+          <div class="form-group"><label>Email Address *</label><input type="email" id="f-email" name="email" placeholder="you@example.com" required></div>
+          <div class="form-group"><label>Subject</label><input type="text" id="f-subject" name="subject" placeholder="Research collaboration..."></div>
+          <div class="form-group"><label>Message *</label><textarea id="f-msg" name="message" placeholder="Tell me about your project or idea..." required></textarea></div>
+          <button type="submit" class="form-submit" id="f-submit-btn">Send Message →</button>
+          <div id="form-msg"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-left">&copy; 2026 <span>Mithilesh Adhinarayanan</span> · Hosur, India</div>
+  <div class="footer-right">Built with precision · AI &amp; Data Science · 🌿 Green Theme</div>
+</footer>
+
+<script>
+// CURSOR
+const dot=document.getElementById('cursorDot'),ring=document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+function animCursor(){dot.style.left=mx+'px';dot.style.top=my+'px';rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animCursor);}
+animCursor();
+
+// NEURAL CANVAS — green nodes
+const canvas=document.getElementById('neural-canvas'),ctx=canvas.getContext('2d');
+let W,H,nodes=[];
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+resize();window.addEventListener('resize',resize);
+function createNodes(n){nodes=[];for(let i=0;i<n;i++)nodes.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,r:Math.random()*2+1});}
+createNodes(65);
+function drawCanvas(){
+  ctx.clearRect(0,0,W,H);
+  nodes.forEach(n=>{n.x+=n.vx;n.y+=n.vy;if(n.x<0||n.x>W)n.vx*=-1;if(n.y<0||n.y>H)n.vy*=-1;});
+  for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){const dx=nodes[i].x-nodes[j].x,dy=nodes[i].y-nodes[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<155){ctx.beginPath();ctx.moveTo(nodes[i].x,nodes[i].y);ctx.lineTo(nodes[j].x,nodes[j].y);ctx.strokeStyle=`rgba(0,200,120,${(1-d/155)*0.45})`;ctx.lineWidth=0.5;ctx.stroke();}}
+  nodes.forEach(n=>{ctx.beginPath();ctx.arc(n.x,n.y,n.r,0,Math.PI*2);ctx.fillStyle='rgba(0,200,120,0.55)';ctx.fill();});
+  requestAnimationFrame(drawCanvas);
+}
+drawCanvas();
+
+// REVEAL
+const ro=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),80);ro.unobserve(e.target);}});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+
+// FORMSPREE CONTACT
+const FORMSPREE="https://formspree.io/f/maqraqoo";
+document.getElementById('contact-form').addEventListener('submit',async function(e){
+  e.preventDefault();
+  const name=document.getElementById('f-name').value.trim(),email=document.getElementById('f-email').value.trim(),subject=document.getElementById('f-subject').value.trim(),message=document.getElementById('f-msg').value.trim();
+  const msgEl=document.getElementById('form-msg'),btn=document.getElementById('f-submit-btn');
+  if(!name||!email||!message){msgEl.style.color='#ff8080';msgEl.textContent='⚠ Please fill in all required fields.';return;}
+  btn.disabled=true;btn.textContent='Sending…';msgEl.style.color='var(--muted)';msgEl.textContent='Sending your message…';
+  try{
+    const r=await fetch(FORMSPREE,{method:'POST',headers:{'Accept':'application/json','Content-Type':'application/json'},body:JSON.stringify({name,email,subject:subject||'Portfolio Contact',message})});
+    if(r.ok){msgEl.style.color='var(--accent)';msgEl.textContent='✓ Message sent! I\'ll get back to you soon.';this.reset();}
+    else throw new Error();
+  }catch{msgEl.style.color='#ff8080';msgEl.textContent='✗ Send failed. Please email mithilcuber@gmail.com directly.';}
+  finally{btn.disabled=false;btn.textContent='Send Message →';}
+});
+
+// GITHUB CALENDAR
+(async function(){
+  const countEl=document.getElementById('ghContribCount'),calEl=document.getElementById('ghCalendar');
+  const COLORS=['rgba(255,255,255,0.04)','#0a2e18','#0f4a28','#14643a','#00c896'];
+  try{
+    const res=await fetch('https://github-contributions-api.jogruber.de/v4/Mithil-7?y=last');
+    if(!res.ok)throw new Error();
+    const data=await res.json();
+    const contribs=data.contributions||[];
+    const total=(data.total&&(data.total.lastYear??Object.values(data.total).pop()))??contribs.reduce((s,d)=>s+d.count,0);
+    const weeks=[];let cur=[];
+    contribs.forEach((day,i)=>{const dow=new Date(day.date+'T00:00:00').getDay();if(i===0)for(let p=0;p<dow;p++)cur.push(null);cur.push(day);if(dow===6){weeks.push(cur);cur=[];}});
+    if(cur.length)weeks.push(cur);
+    calEl.innerHTML='';
+    weeks.forEach(week=>{const we=document.createElement('div');we.className='gh-week';for(let d=0;d<7;d++){const day=week[d],cell=document.createElement('div');cell.className='gh-day';if(day){cell.style.background=COLORS[Math.min(day.level??0,4)];cell.title=`${day.count} on ${day.date}`;}else cell.style.visibility='hidden';we.appendChild(cell);}calEl.appendChild(we);});
+    countEl.innerHTML=`<span class="count-num">${total.toLocaleString()}</span><span class="count-label">Contributions in the last year</span>`;
+  }catch{countEl.innerHTML=`<span class="count-label">Couldn't load data — <a href="https://github.com/Mithil-7" target="_blank" style="color:var(--accent)">view profile →</a></span>`;}
+})();
+
+// NAV ACTIVE
+const secs=document.querySelectorAll('section[id]'),navAs=document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll',()=>{let cur='';secs.forEach(s=>{if(window.scrollY>=s.offsetTop-200)cur=s.id;});navAs.forEach(a=>{a.style.color=a.getAttribute('href')==='#'+cur?'var(--accent)':''});});
+</script>
+</body>
+
+</html>
