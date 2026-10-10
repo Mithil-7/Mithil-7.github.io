@@ -2,6 +2,8 @@
   'use strict';
 
   const toggle = document.getElementById('audio-toggle');
+  const soundSettings = document.querySelector('.sound-settings');
+  const soundSummary = document.getElementById('audio-settings-toggle');
   const label = document.getElementById('audio-label');
   const volumeInput = document.getElementById('audio-volume');
   const status = document.getElementById('audio-status');
@@ -10,7 +12,7 @@
   const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
   const MIN_VOLUME = 0;
   const MAX_VOLUME = 100;
-  const DEFAULT_VOLUME = 55;
+  const DEFAULT_VOLUME = 40;
   const MAX_GAIN = 0.32;
   const UNLOCK_EVENTS = ['pointerdown', 'mousedown', 'touchstart', 'keydown', 'keyup', 'wheel', 'scroll', 'click'];
   const notes = [130.81, 164.81, 196.00, 246.94, 261.63, 196.00, 146.83, 220.00];
@@ -51,8 +53,11 @@
 
   const setToggleState = enabled => {
     toggle.setAttribute('aria-pressed', String(enabled));
-    toggle.setAttribute('aria-label', enabled ? 'Turn ambient sound off' : 'Turn ambient sound on');
+    toggle.setAttribute('aria-label', enabled ? 'Ambient on. Turn sound off' : 'Ambient off. Turn sound on');
     label.textContent = enabled ? 'Ambient on' : 'Ambient off';
+    soundSummary?.classList.toggle('is-active', enabled);
+    soundSummary?.setAttribute('aria-label', enabled ? 'Ambient sound on. Open sound controls' : 'Ambient sound off. Click to turn on and open sound controls');
+    if (soundSummary) soundSummary.title = enabled ? 'Ambient sound on — sound controls' : 'Ambient sound off — click to turn on';
   };
 
   const volumeLevel = () => (updateVolumeAccessibility() / MAX_VOLUME) * MAX_GAIN;
@@ -184,6 +189,8 @@
     stopScheduler();
     setToggleState(false);
     toggle.disabled = true;
+    soundSummary?.setAttribute('aria-disabled', 'true');
+    if (soundSummary) soundSummary.title = 'Ambient sound is unavailable in this browser';
     setStatus('Ambient sound is unavailable in this browser.');
   }
 
@@ -282,7 +289,7 @@
     }
   }
 
-  const startOnLoad = true;
+  const startOnLoad = false;
   updateVolumeAccessibility();
   setToggleState(startOnLoad);
   setStatus(startOnLoad ? 'Ambient is starting.' : 'Ambient off. Click to enable synthesized ambient sound.');
@@ -293,9 +300,17 @@
   }
 
   toggle.addEventListener('click', () => {
-    const isPlaying = userEnabled && playbackActive && !hiddenPause;
-    if (isPlaying) disableAudio();
+    if (userEnabled) disableAudio();
     else enableAudio(false);
+  });
+  // The note in the header is also a one-click start control. The first click
+  // opens the panel and begins the Web Audio graph inside the user's gesture;
+  // the larger button remains available for explicit on/off control.
+  soundSummary?.addEventListener('click', event => {
+    if (soundSettings?.open || userEnabled) return;
+    event.preventDefault();
+    if (soundSettings) soundSettings.open = true;
+    enableAudio(false);
   });
   volumeInput.addEventListener('input', () => {
     const value = getVolume();
@@ -307,7 +322,6 @@
     else resumeVisiblePage();
   });
 
-  // Try to start on page load. Browsers may require one user gesture before
-  // audible playback; in that case the first interaction unlocks this same loop.
+  // Sound stays opt-in; create an audio graph only after the sound control is used.
   if (startOnLoad) enableAudio(true);
 })();

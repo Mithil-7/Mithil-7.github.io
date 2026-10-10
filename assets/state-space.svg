@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="580" viewBox="0 0 640 580" fill="none">
+  <title>A cube in a mathematical state space</title>
+  <g stroke="#81e5bd" opacity=".22"><ellipse cx="320" cy="288" rx="257" ry="158" transform="rotate(-24 320 288)"/><ellipse cx="320" cy="288" rx="260" ry="126" transform="rotate(30 320 288)"/><ellipse cx="320" cy="288" rx="145" ry="241" transform="rotate(20 320 288)"/><circle cx="320" cy="288" r="228" stroke-dasharray="2 12"/></g>
+  <g stroke="#080d14" stroke-width="7" stroke-linejoin="round"><path d="M320 155L445 219L320 286L195 219Z" fill="#f3cf7d"/><path d="M195 219L320 286V433L195 363Z" fill="#81e5bd"/><path d="M320 286L445 219V363L320 433Z" fill="#90b8ff"/></g>
+  <g stroke="#080d14" stroke-width="5"><path d="M236 198L361 264M278 177L403 242M236 242L361 177M278 264L403 198M236 242V387M278 264V411M195 267L320 335M195 315L320 383M361 264V411M403 242V387M320 335L445 267M320 383L445 315"/></g>
+  <g fill="#81e5bd"><circle cx="82" cy="282" r="4"/><circle cx="537" cy="194" r="4"/><circle cx="434" cy="492" r="3"/></g>
+  <g font-family="monospace" font-size="11" fill="#a0aebd"><text x="70" y="139">∇θ J(θ)</text><text x="455" y="415">P(s′ | s, a)</text><text x="90" y="476">8! × 3⁷ × 12! × 2¹⁰</text></g>
+</svg>

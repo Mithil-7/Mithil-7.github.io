@@ -1,12 +1,12 @@
 <div align="center">
 
 <a href="https://mithil-7.github.io/">
-  <img src="assets/hero.svg" width="100%" alt="Mithilesh Adhinarayanan — Signal to Policy to Impact. Reinforcement learning, quantitative finance, and applied AI." />
+  <img src="assets/social-card.png" width="100%" alt="Mithilesh Adhinarayanan — State. Move. Result. AI research, quantitative finance, and engineering." />
 </a>
 
 **AI researcher · Quant enthusiast · Builder**
 
-[Portfolio](https://mithil-7.github.io/) &nbsp; / &nbsp; [LinkedIn](https://www.linkedin.com/in/mithilesh-a-07486935b/) &nbsp; / &nbsp; [Email](mailto:mithilcuber@gmail.com) &nbsp; / &nbsp; [Freelancer](https://www.freelancer.in/u/Mithil7a)
+[Portfolio](https://mithil-7.github.io/) &nbsp; / &nbsp; [Puzzle Lab](https://mithil-7.github.io/interactive-lab.html) &nbsp; / &nbsp; [LinkedIn](https://www.linkedin.com/in/mithilesh-a-07486935b/) &nbsp; / &nbsp; [Email](mailto:mithilcuber@gmail.com) &nbsp; / &nbsp; [WCA](https://www.worldcubeassociation.org/persons/2022ADHI01)
 
 <sub>SASTRA Deemed University · B.Tech CSE (AI & DS), 2024–2028 · Hosur, India</sub>
 
@@ -136,6 +136,12 @@ Working on exchange-rate forecasting and APT detection research.
 
 <sub>Generated from my public GitHub contribution calendar. This is a dated snapshot, not a live feed or performance metric. Click either chart for the latest GitHub activity. Refresh instructions are in <a href="SETUP.md">SETUP.md</a>.</sub>
 
+## 07 / The instinct to solve
+
+Speedcubing is a hands-on way to think about state spaces, patterns, and legal moves. My [WCA profile](https://www.worldcubeassociation.org/persons/2022ADHI01) is **2022ADHI01**. Official personal-best singles: **37.70s on 3×3**, **13.17s on 2×2**, and **6.61s on Pyraminx**, from Cubing Returns Bengaluru 2022.
+
+The [Puzzle Lab](https://mithil-7.github.io/interactive-lab.html) explores playable 2×2–5×5 cube permutations alongside kinetic Pyraminx and Clock geometry.
+
 ---
 
 <div align="center">
@@ -148,6 +154,6 @@ Open to **research collaborations**, **internships**, and **freelance AI/ML work
 
 [Portfolio](https://mithil-7.github.io/) · [LinkedIn](https://www.linkedin.com/in/mithilesh-a-07486935b/) · [GitHub](https://github.com/Mithil-7) · [Stack Exchange](https://stackexchange.com/users/36784600/mithil-a) · [Freelancer](https://www.freelancer.in/u/Mithil7a)
 
-<sub>Mithilesh Adhinarayanan · Signal → Policy → Impact</sub>
+<sub>Mithilesh Adhinarayanan · State. Move. Result.</sub>
 
 </div>
